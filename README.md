@@ -27,9 +27,10 @@ git clone https://github.com/samusoler22/challenge
 cd challenge
 ```
 
+IMPORTANT
 2. Set up Google Cloud credentials:
-- Place your Google Cloud service account JSON key inside challenge `Folder` with file name `gc_user.json`
-- Ensure you have the necessary permissions for BigQuery and Natural Language API
+- Replace `gc_user.json` file in the repository for the file with the same name provided to you,
+  that is your Google Cloud service account JSON key that is used to provide access in the GCP enviroment.
 
 ## Local Usage
 
