@@ -1,7 +1,7 @@
 import re
-import os
 import time
 import pandas as PD
+from pandas_gbq import to_gbq
 from selenium import webdriver
 from colorama import init, Fore
 from bs4 import BeautifulSoup as BS
@@ -10,10 +10,7 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 
 class YogonetScrapper:
-    '''Class to scrap Yogonet webpage, Analyze it with pandas and upload it to BigQuery.
-    TODO:
-    - Get all news
-    '''
+    '''Class to scrap Yogonet webpage, Analyze it with pandas and upload it to BigQuery.'''
     
     def __init__(self):
         init() # colorama inizialization
@@ -40,16 +37,17 @@ class YogonetScrapper:
         time.sleep(5)
         soup = BS(self.web_driver.page_source, "html.parser")
         return soup
-    
-    def create_payload(self, nro ,noticia):
+
+    def create_payload(self, noticia):
         '''Method to create noticia payload and fix value if needed'''
-        #here we search the values asked for the challenge
-        kicker = noticia.find("div",class_="volanta fuente_roboto_slab").text.strip() if noticia.find("div",class_="volanta fuente_roboto_slab") else None
-        title = noticia.find("h2",class_="titulo fuente_roboto_slab").a.text.strip() if noticia.find("h2",class_="titulo fuente_roboto_slab") else None
-        link = noticia.find("h2",class_="titulo fuente_roboto_slab").a['href'] if noticia.find("h2",class_="titulo fuente_roboto_slab") else None
+        #here we search the values/fields asked for the challenge
+        data = noticia.find("div",class_="volanta_item_listado_noticias")
+        title = data.a['title']
+        link = data.a['href']
+        data.b.decompose()
+        kicker = data.a.text.strip() if data.a else None
         image = noticia.find("img")['src'] if noticia.find("img") else None
-        #if one of them is not found but we have a link, we can try to get the values from the link
-        if (not kicker or not title or not image) and link:
+        if (not kicker or not title) and link:
             print(Fore.YELLOW + "value in noticia is None, fixing it ...")
             soup = self.goto_and_soup(link)
             kicker = soup.find("div",class_="volanta_noticia fuente_roboto_slab").text.strip() if soup.find("div",class_="volanta_noticia fuente_roboto_slab") else None
@@ -60,8 +58,7 @@ class YogonetScrapper:
                 print(kicker)
                 print(title)
                 print(image)
-                raise Exception(f"value in noticia {nro} still None, check link: {link}")
-            #print(f"fixed noticia {nro}")
+                raise Exception(f"value in noticia still None, check link: {link}")
         
         payload = {
             "kicker": kicker,
@@ -71,13 +68,42 @@ class YogonetScrapper:
         }
 
         print(Fore.GREEN + "- - - - - - - - - - - - - -"   )
-        print(f"noticia {nro} - {title}")
+        print(f"Noticia - {title}")
         print(link)
 
         return payload
 
-    def get_yogonet_data(self):
-        '''Method to get yogonet data'''
+    def get_all_news(self):
+        '''Method to get all news
+        IMPORTANT:
+        - This method scrapes all the news/noticias available in the webpage but just in the first category
+        theres more than 16000 news so for this challenge i'll get the first 2 pages per category
+        '''
+        URL = "https://www.yogonet.com/international/"
+        soup = self.goto_and_soup(URL)
+        categories_container = soup.find("div", class_="contenedor_items_hijos")
+        categories_data = [{"category": x.text.strip(), "url": x['href']} for x in categories_container.find_all("a")]
+        print(Fore.YELLOW + f"Categories found: {len(categories_data)}")
+        for category in categories_data:
+            paginator = 1
+            while True:
+                print(Fore.YELLOW + f"Category: {category['category']} - Page {paginator}")
+                soup = self.goto_and_soup(category['url'] + f"?buscar=&pagina={paginator}")
+                noticias = soup.find_all("div", class_="item_listado_noticias")
+                for noticia in noticias:
+                    payload = self.create_payload(noticia)
+                    if payload['link'] not in [x['link'] for x in self.noticias]:
+                        self.noticias.append(payload)
+                print(Fore.YELLOW + f"Noticias found: {len(noticias)}")
+                if len(noticias) == 0 or paginator == 2:
+                    break
+                paginator += 1
+        return None #?
+
+    def get_front_news(self):
+        '''Method to get yogonet front page news
+           IMPORTANT:
+           - Method not used'''
         #First get the news/noticas html
         URL = "https://www.yogonet.com/international/"
         soup = self.goto_and_soup(URL)
@@ -87,7 +113,7 @@ class YogonetScrapper:
         print(Fore.YELLOW + f"Noticias found: {len(noticias)}")
         for nro ,noticia in enumerate(noticias):
             nro += 1
-            payload =self.create_payload(nro, noticia)
+            payload =self.create_payload_news(nro, noticia)
             if payload['link'] not in [x['link'] for x in self.noticias]:
                 self.noticias.append(payload)
         
@@ -142,7 +168,7 @@ class YogonetScrapper:
     def main(self):
         '''Run method'''
         #extract yogonet data
-        self.get_yogonet_data()
+        self.get_all_news()
         #pandas process
         df = self.pandas_process()
         #extract additional data
