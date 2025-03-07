@@ -1,16 +1,18 @@
+import re
 import os
 import time
 import pandas as PD
 from selenium import webdriver
 from colorama import init, Fore
 from bs4 import BeautifulSoup as BS
+from google.cloud import language_v1
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 
 class YogonetScrapper:
     '''Class to scrap Yogonet webpage, Analyze it with pandas and upload it to BigQuery.
     TODO:
-    - Add pandas analysis method
+    - Add pandas process method
     - Add BigQuery upload method
     '''
     
@@ -27,6 +29,7 @@ class YogonetScrapper:
         options.binary_location = firefox_path
         self.web_driver = webdriver.Firefox(service=service, options=options)
         self.noticias = []
+        self.gcnl_client = language_v1.LanguageServiceClient()
         try:
             self.main()
         except Exception as e:
@@ -63,13 +66,16 @@ class YogonetScrapper:
                 raise Exception(f"value in noticia {nro} still None, check link: {link}")
             #print(f"fixed noticia {nro}")
         
-        print(Fore.GREEN + f"noticia {nro} - {title}")
         payload = {
             "kicker": kicker,
             "title": title,
             "link": link,
             "image": image,
         }
+
+        print(Fore.GREEN + "- - - - - - - - - - - - - -"   )
+        print(f"noticia {nro} - {title}")
+        print(link)
 
         return payload
 
@@ -90,10 +96,64 @@ class YogonetScrapper:
         
         print(Fore.YELLOW + f"Noticas scrapped: {len(self.noticias)}")
 
+    #PANDAS PROCESS
+    def pandas_process(self):
+        '''Method to process data with pandas'''
+        df = PD.DataFrame(self.noticias)
+        # - Word count in title
+        df['word_count'] = df['title'].apply(lambda x: len(x.split()))
+        # - Character count in title
+        df['character_count'] = df['title'].apply(lambda x: len(x))
+        #List of words that start with a capital letter in Title
+        def capitalized_words(title):
+            capitalized_words = re.findall(r'\b[A-Z][a-z]*\b', title)
+            return capitalized_words if capitalized_words else None
+        df['capitalized_words'] = df['title'].apply(capitalized_words)
+        
+        return df
+
+    #EXTRACT ADDITIONAL DATA
+    def extract_additional_data(self, title):
+        '''Method to analyz title and get person, organization and location data using Google CLoud Natural Language'''
+        document = language_v1.Document(content=title, type_=language_v1.Document.Type.PLAIN_TEXT)
+        response = self.gcnl_client.analyze_entities(document=document)
+        
+        persons = []
+        organizations = []
+        locations = []
+        
+        for entity in response.entities:
+            if entity.type == language_v1.Entity.Type.PERSON:
+                persons.append(entity.name)
+            elif entity.type == language_v1.Entity.Type.ORGANIZATION:
+                organizations.append(entity.name)
+            elif entity.type == language_v1.Entity.Type.LOCATION:
+                locations.append(entity.name)
+        if not persons:
+            persons = None
+        if not organizations:
+            organizations = None
+        if not locations:
+            locations = None
+        return persons, organizations, locations
+
+    #BIGQUERY UPLOAD
+    def upload_to_bigquery(self, df):
+        '''Method to upload data to BigQuery'''
+        df.to_gbq(destination_table='yogonet_dataset.news', project_id='challenge-452921', if_exists='replace')
+
     def main(self):
         '''Run method'''
         #extract yogonet data
         self.get_yogonet_data()
+        #pandas process
+        df = self.pandas_process()
+        #extract additional data
+        df[['persons', 'organizations', 'locations']] = df['title'].apply(lambda x: PD.Series(self.extract_additional_data(x)))
+
+        print(df.head())
+        #upload to bigquery
+        self.upload_to_bigquery(df)
 
 if __name__ == "__main__":
     YogonetScrapper()
