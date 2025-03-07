@@ -12,16 +12,13 @@ from selenium.webdriver.firefox.options import Options
 class YogonetScrapper:
     '''Class to scrap Yogonet webpage, Analyze it with pandas and upload it to BigQuery.
     TODO:
-    - Add pandas process method
-    - Add BigQuery upload method
+    - Get all news
     '''
     
     def __init__(self):
         init() # colorama inizialization
-        self.current_dir = os.path.dirname(os.path.abspath(__file__))
-        gecko_path = os.path.join(self.current_dir, "geckodriver.exe")
-        firefox_path = "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
-        service = Service(gecko_path)
+        firefox_path = "/usr/bin/firefox-esr"
+        service = Service("/usr/local/bin/geckodriver")
         options = Options()
         options.add_argument("-headless")
         options.add_argument("--no-sandbox")
@@ -154,6 +151,7 @@ class YogonetScrapper:
         print(df.head())
         #upload to bigquery
         self.upload_to_bigquery(df)
+        print(Fore.GREEN + "Data uploaded to BigQuery")
 
 if __name__ == "__main__":
     YogonetScrapper()
