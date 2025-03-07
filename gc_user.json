@@ -1,13 +1,1 @@
-{
-  "type": "service_account",
-  "project_id": "challenge-452921",
-  "private_key_id": "a1536b60f9a097f0970d892e1a4069167ed84666",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDbjU8QfnySChh9\nSOXnQnPF3MTTRSK1CjyTmmnDqc5tdzIEo2MuzSGN1a5qpQSVTadXqkBvz3wRAPz0\nUt1GIvcO8bo/3/KHfCizzGZZBGFhv4ePwzW9Qc2JWuEproXVQ3oCiOPkoI9jqTt9\nNlrl0rPHqwblY5NQGhXBHiPkMAfHShlNew3Aw4GQ+0Zr1dqcoGHhGlfyJ6iTBNXX\n6LFc1IVbrcy6Ks99C3BoVeOTObcCIvAZwszp8nGNAG2vh1Zgr4i7RbZNX6r3Kla/\nnRnTIWNrW3a6RpD12itFmuLdN8jaNj3I6WUtj74MuRxZilivCH1bSceo5Vm3MljR\nJan4JUAVAgMBAAECggEAEeOluZZU2CFydWLnOLy1aj3e28gaV94JqY0/aO4BH/JC\nZRZbEoksXr42hAIGKZQ2OnJo5bNmTIxkEBRga0KWFuWjY2j//gIj3uKcxEwTEz/j\n79bcHhuqf7Kj/h12UjY5TtOQniRnCpvTeRRgu7E7bN2GplJCwpgdharLCeDQAXDl\ngK+c/rDIgxMfy9Gep28WaEcxNIIMzXQ/dPWHn24EuT/9kQXQgud7PR4YXCEb81tE\nvrr2NeIntL+Lg0v9wjIYc/Ytc5IOSTepM3d/7ncGqc06Dy76BcjxTzqDmwL6NWRI\n6ScPc0KQ5p5tFKOyW1InEz3SR2jUdacyWhzK7WH8UQKBgQD8gonrhByg0d7epBvn\nZ0hM273Lpp87Uj/v+jO9MEdsJgOY9ghrE1r7B2j7n41KND46+TRn6h9qhHyrBP0L\nG7jr64ClyQ9J7UZe/4tMtY3ku5hqfoXbkwV55tzZF1omwS+JK7I85eXjvPU0aVw/\nvSOHLycfolXQKalX3kyvrxpnowKBgQDelieDWVSmpmQtiSUGhpEjbvHbsrxUu0Ds\nU/nEkkwVmevXSgNA5xnS7c4nUV+3kYa9eANSvddcnGXVUovHCqzZgEFB6D6l6lk1\nifWkLSihWwJV2YWWqvt4yudSkZVH8+WcxFYAeWysbI/C+SfRRg1/+zGKb38NXWt4\n7YTv03MU5wKBgHC/nPPTjrDkZR6Gqor93BOtfqbDZJApXrE5yAZu20VYB/0xxnqB\nLvutyFuqV31NrIfKpHLN4G9AbyYx2Qcvvrdg9ZWRHEmHMAfVFQ8QdiYu+ZR7oCt2\nD1jqE6y/t5pcYmxeXXzBro+s3NQlQ3KWcpm3HUILy0NihuHcOeOsTR7/AoGAEHuD\n/4j86L5HisuuDzalxr7vb/pjUc7v9tAdHb5Lngng2fdkGElEs0biziyLbvd6x8r8\nTAM80GHQdKSBL0MOG6kQrAW7peOdqYZGx1qEuLYZjSvnZYnRx1cXHBklucdIyHwN\ndkmHj5kWaDS1Cx0p4MFEIOEywlWZoMHN50h8LB8CgYEApXp3SUPJEtRfaNUJLAcs\n7BSoh/Dwy0kTOtY1ulpB16VrrkwFdFBA1Hwba6xPWTxSjVoSfyUEkcl1VqdkajpB\nnnEscAtM9L+x6aLjtgTVTytNM987Lq09jwwHDPApzeQNwNk3EfrzUwC8/P5xvKqm\n4+qrjhQhqv0QUYdEibMdYHA=\n-----END PRIVATE KEY-----\n",
-  "client_email": "challenge@challenge-452921.iam.gserviceaccount.com",
-  "client_id": "117284847717316168653",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/challenge%40challenge-452921.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
+EXAMPLE FILE, PLZ REPLACE WITH THE FILE WITH THE SAME NAME PROVIDED TO YOU
