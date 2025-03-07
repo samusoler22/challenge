@@ -27,8 +27,5 @@ COPY gc_user.json /app/gc_user.json
 # Set the environment variable
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/gc_user.json
 
-# Expose any necessary ports (modify as needed)
-EXPOSE 8080
-
 # Command to run the script
 CMD ["python", "scrapper.py"]
