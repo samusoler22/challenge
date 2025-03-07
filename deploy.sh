@@ -9,28 +9,28 @@ TAG="latest"
 JOB_NAME="challenge-job"
 SERVICE_ACCOUNT="challenge@challenge-452921.iam.gserviceaccount.com"
 
+#Select project
+gcloud config set project $PROJECT_ID
+
+#Select active account
+gcloud auth activate-service-account --key-file=gc_user.json
+
 # Enable required services
 gcloud services enable artifactregistry.googleapis.com
 gcloud services enable run.googleapis.com
 gcloud services enable iam.googleapis.com
 
 # Authenticate Docker to push to Google Artifact Registry
-gcloud auth configure-docker $REGION-docker.pkg.dev
+gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
 
 # Create Artifact Registry (if it doesn't exist)
-gcloud artifacts repositories create $REPOSITORY --repository-format=docker --location=$REGION --description="Docker repository" || true
+gcloud artifacts repositories create $REPOSITORY --repository-format=docker --location=$REGION --description="Docker repository" || true --quiet
 
 # Build the Docker image
 docker build -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$TAG .
 
 # Push the image to Google Artifact Registry
 docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$TAG
-
-# Grant 'iam.serviceAccountUser' role to the current user
-gcloud iam service-accounts add-iam-policy-binding $SERVICE_ACCOUNT \
-    --member="user:$(gcloud config get-value core/account)" \
-    --role="roles/iam.serviceAccountUser" \
-    --project=$PROJECT_ID
 
 # Delete the existing job
 gcloud run jobs delete $JOB_NAME --region $REGION --quiet

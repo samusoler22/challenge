@@ -1,7 +1,6 @@
 import re
 import time
 import pandas as PD
-from pandas_gbq import to_gbq
 from selenium import webdriver
 from colorama import init, Fore
 from bs4 import BeautifulSoup as BS
