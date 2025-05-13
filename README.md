@@ -1,4 +1,4 @@
-# Yogonet News Scraper
+# Yogonet News Scraper (ENTREVISTA TRABAJO)
 
 A Python-based web scraping application that extracts news articles from Yogonet, processes the data using pandas, and uploads it to Google BigQuery. The application is containerized and deployed as a job on Google Cloud Run.
 
